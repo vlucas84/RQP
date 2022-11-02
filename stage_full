@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script src="https://stage.app.roofle.com/roof-quote-pro-embedded-widget.js?id=c5nml5umMOJ_m3mjLwqta" async></script>
+  </head>
+  <body>
+  <ul>
+    <li><a href="https://vlucas84.github.io/RQP/">Dev</a></li>
+  </ul>
+  <ul>
+    <li><a href="https://vlucas84.github.io/RQP/dev_full.html">Dev full-page</a></li>
+  </ul>  
+  <ul>
+    <li><a href="https://vlucas84.github.io/RQP/stage.html">Stage</a></li>
+  </ul>
+    <ul>
+    <li><a href="https://vlucas84.github.io/RQP/stage_full.html"><h2>Stage</h2></a></li>
+  </ul>
+  <ul>
+    <li><a href="https://vlucas84.github.io/RQP/prod.html">Prod</a></li>
+  </ul>
+  <div id="roof-quote-pro-embedded"></div>
+  </body>
+</html>
