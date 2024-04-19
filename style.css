@@ -12,5 +12,8 @@ div {
   font-family: Rubik;
 }
 
-
-
+img {
+  max-width: 100%;
+  width: 100%;
+  pointer-events: none;
+    }
