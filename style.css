@@ -12,6 +12,10 @@ th, td {
   padding-right: 30px;
 }
 
+.hidden {
+  z-index: -1
+}
+
 /*!  {
   max-width: 100%;
   width: 100%;
