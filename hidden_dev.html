@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Stage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Spectral|Rubik">
+
+    <!-- Виджеты -->
+    <script src="https://app.dev.roofle.coherentprojects.net/loan-calculator-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>
+    <script src="https://app.dev.roofle.coherentprojects.net/roof-quote-pro-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>   
+  </head>
+  <body class="min-h-screen bg-gray-50">
+
+    <!-- 2) Навигация с hidden md:flex -->
+    <header class="sticky top-0 z-10 bg-white border-b">
+      <nav class="bg-white">
+        <ul class="hidden md:flex gap-6 p-4">
+          <li><a href="#" class="text-blue-600 underline">Home</a></li>
+          <li><a href="#" class="text-blue-600 underline">Products</a></li>
+          <li><a href="#" class="text-blue-600 underline">About</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="relative z-0 max-w-5xl mx-auto p-6 space-y-4">
+      <div class="p-6 border rounded shadow bg-white -mt-6">
+        <p>Навбар виден, но НЕ кликается: .hidden { z-index:-1 } опускает его ниже этого блока.</p>
+      </div>
+      <div class="h-[120vh]"></div>
+    </main>
+
+  </body>
+</html>
