@@ -1,0 +1,37 @@
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Tailwind через CDN для простоты -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Имитируем стили, которые инжектирует виджет -->
+  <style>
+    /* ПРОБЛЕМНЫЙ СЕЛЕКТОР ИЗ ВИДЖЕТА */
+    .hidden { z-index: -1; } /* ← конфликт с Tailwind */
+  </style>
+    
+    <script src="https://stage.app.roofle.com/roof-quote-pro-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>
+    <script src="https://stage.app.roofle.com/loan-calculator-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>    
+    
+  </head>
+  <body class="min-h-screen">
+  <header class="relative z-0">
+    <nav class="bg-white border-b border-gray-200">
+      <!-- Класс hidden остаётся в разметке, но на md+ его display переопределяется -->
+      <ul class="hidden md:flex gap-6 p-4">
+        <li><a href="#" class="text-blue-600 underline">Home</a></li>
+        <li><a href="#" class="text-blue-600 underline">Products</a></li>
+        <li><a href="#" class="text-blue-600 underline">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Контент ниже «перекрывает» нав из-за отрицательного z-index у .hidden -->
+  <main class="relative z-0 -mt-8 p-8">
+    <div class="p-8 border rounded shadow">
+      <p>Try clicking the nav links — they look visible but are unclickable.</p>
+    </div>
+  </main>
+</body>
+</html>
