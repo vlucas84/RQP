@@ -1,69 +1,64 @@
-<html lang="ru">
   <head>
     <meta charset="utf-8" />
-    <title>Repro: Tailwind x .hidden (инжект из виджета)</title>
+    <title>MRE: Tailwind `hidden` x widget-injected `.hidden { z-index:-1; }`</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- ВАЖНО: виджет в <head>. Он инжектит глобальные стили, включая .hidden { z-index:-1 } -->
+    <!-- Fonts (unchanged) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Spectral|Rubik">
+
+    <!-- IMPORTANT: Widget script in <head>. It injects global styles, including `.hidden { z-index:-1; }`. -->
     <script src="https://app.dev.roofle.coherentprojects.net/roof-quote-pro-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>   
-    <!-- (Необязательно) второй скрипт, если нужен на странице -->
-    <!-- <script src="https://stage.app.roofle.com/loan-calculator-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script> -->
+    <!-- Optional second widget (kept from your original page) -->
+    <script src="https://app.dev.roofle.coherentprojects.net/loan-calculator-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>
+   
   </head>
 
   <body class="min-h-screen bg-gray-50">
+    <!-- Header / Navbar -->
     <header class="sticky top-0 z-10 bg-white border-b">
       <div class="max-w-5xl mx-auto flex items-center justify-between p-4">
-        <h1 class="text-base font-semibold">Repro: .hidden от виджета ломает навбар</h1>
-        <!-- Диагностическая кнопка: локально снимает влияние .hidden { z-index:-1 } -->
-        <button id="overrideBtn"
-                class="px-3 py-1.5 rounded border text-sm bg-white hover:bg-gray-100">
-          Apply temporary override
-        </button>
+        <h1 class="text-base font-semibold">Repro: widget-injected <code>.hidden</code> breaks navbar</h1>
       </div>
 
-      <!-- Навигация с паттерном Tailwind `hidden md:flex` -->
+      <!-- The key Tailwind pattern: `hidden md: flex`. On ≥768px this is displayed,
+           but the `hidden` class remains in the DOM and receives z-index:-1 from the widget.
+           Result: the navbar (and its dropdown) appear but are not clickable. -->
       <nav class="bg-white">
         <ul class="hidden md:flex gap-6 p-4">
           <li><a href="#" class="text-blue-600 underline">Home</a></li>
-          <li><a href="#" class="text-blue-600 underline">Products</a></li>
+
+          <!-- Dropdown on "Products" -->
+          <li class="relative group">
+            <a href="#" class="text-blue-600 underline">Products</a>
+            <!-- Dropdown menu:
+                 Uses `hidden` + `group-hover: block` (classic Tailwind pattern).
+                 Even when shown as `block` on hover, the element still carries the `hidden` class,
+                 thus also inherits z-index:-1 from the widget → ends up underneath content. -->
+            <div
+              class="hidden group-hover:block absolute top-full left-0 mt-2 w-48 rounded border bg-white shadow p-2">
+              <a href="#" class="block px-3 py-2 hover:bg-gray-100 rounded">Roof Quote Pro</a>
+              <a href="#" class="block px-3 py-2 hover:bg-gray-100 rounded">Loan Calculator</a>
+              <a href="#" class="block px-3 py-2 hover:bg-gray-100 rounded">Support</a>
+            </div>
+          </li>
+
           <li><a href="#" class="text-blue-600 underline">About</a></li>
         </ul>
       </nav>
     </header>
 
-    <!-- Блок ниже частично «наезжает» на навбар, чтобы проявить эффект некликабельности -->
+    <!-- Content below overlaps slightly so the z-index:-1 effect is obvious:
+         links look visible, but clicks won't land on them (including the dropdown). -->
     <main class="relative z-0 max-w-5xl mx-auto p-6 space-y-4">
       <div class="p-6 border rounded shadow bg-white -mt-6">
-        <p>На ≥768px меню видно (md:flex), но клики не проходят: глобальный .hidden { z-index:-1 } от виджета
-           опускает слой навигации ниже этого блока.</p>
+        <p><strong>Verification (desktop ≥768px):</strong> The navbar and the “Products” dropdown appear,
+           but clicks do not register because the widget’s global <code>.hidden { z-index:-1; }</code>
+           pushes them beneath this content.</p>
       </div>
       <div class="h-[120vh]"></div>
     </main>
-
-    <script>
-      // Диагностический оверрайд: добавляет после инжекта виджета
-      // правило, снимающее z-index с .hidden, чтобы подтвердить причину.
-      const btn = document.getElementById('overrideBtn');
-      let applied = false;
-      let styleEl;
-
-      btn.addEventListener('click', () => {
-        if (!applied) {
-          styleEl = document.createElement('style');
-          styleEl.setAttribute('data-local-override', 'true');
-          styleEl.textContent = '.hidden { z-index: auto !important; }';
-          document.head.appendChild(styleEl);
-          applied = true;
-          btn.textContent = 'Remove override';
-        } else {
-          styleEl?.remove();
-          applied = false;
-          btn.textContent = 'Apply temporary override';
-        }
-      });
-    </script>
   </body>
 </html>
