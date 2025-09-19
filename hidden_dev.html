@@ -1,31 +1,33 @@
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Tailwind через CDN для простоты -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-    <script src="https://app.dev.roofle.coherentprojects.net/loan-calculator-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>
+<meta charset="UTF-8">
+<title>Tailwind Навигация</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://app.dev.roofle.coherentprojects.net/loan-calculator-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>
     <script src="https://app.dev.roofle.coherentprojects.net/roof-quote-pro-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>   
-
 </head>
-<body class="min-h-screen">
-  <header class="relative z-0">
-    <nav class="bg-white border-b border-gray-200">
-      <!-- Класс hidden остаётся в разметке, но на md+ его display переопределяется -->
-      <ul class="hidden md:flex gap-6 p-4">
-        <li><a href="#" class="text-blue-600 underline">Home</a></li>
-        <li><a href="#" class="text-blue-600 underline">Products</a></li>
-        <li><a href="#" class="text-blue-600 underline">About</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- Контент ниже «перекрывает» нав из-за отрицательного z-index у .hidden -->
-  <main class="relative z-0 -mt-8 p-8">
-    <div class="p-8 border rounded shadow">
-      <p>Try clicking the nav links — they look visible but are unclickable.</p>
-    </div>
-  </main>
+<body class="bg-gray-100">
+ 
+  <!-- Навигация -->
+<nav class="bg-white shadow p-4 flex justify-between items-center">
+<div class="text-xl font-bold">Мой сайт</div>
+<ul class="flex space-x-6">
+<li><a href="#" class="hover:text-blue-500">Главная</a></li>
+<li><a href="#" class="hover:text-blue-500">О нас</a></li>
+<!-- Выпадающее меню -->
+<li class="relative group">
+<button class="hover:text-blue-500">Сервисы ▼</button>
+<!-- Дропдаун -->
+<ul class="absolute left-0 mt-2 w-40 bg-white border rounded shadow-lg hidden group-hover: block">
+<li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Услуга 1</a></li>
+<li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Услуга 2</a></li>
+<li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Услуга 3</a></li>
+</ul>
+</li>
+ 
+      <li><a href="#" class="hover:text-blue-500">Контакты</a></li>
+</ul>
+</nav>
+ 
 </body>
 </html>
