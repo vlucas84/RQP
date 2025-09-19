@@ -1,18 +1,40 @@
-<html>
-  <head>
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Tailwind через CDN для простоты -->
+  <!-- Tailwind для воспроизведения -->
   <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://stage.app.roofle.com/roof-quote-pro-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>
-    <script src="https://stage.app.roofle.com/loan-calculator-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>    
-    
-  </head>
-  <body class="min-h-screen">
-  <header class="relative z-0">
-    <nav class="bg-white border-b border-gray-200">
-      <!-- Класс hidden остаётся в разметке, но на md+ его display переопределяется -->
+
+  <!-- ПРОБЛЕМНЫЕ стили, имитирующие инжект от виджета -->
+  <style id="problematic-styles">
+    /* Глобальный конфликтующий селектор: ломает навбар с hidden md:flex */
+    .hidden { z-index: -1; }
+  </style>
+
+  <!-- ПРАВИЛЬНЫЕ стили (включаются кнопкой "Apply fixes") -->
+  <style id="fixed-styles" disabled>
+    /* Идея фикса: убрать глобальный .hidden.
+       Либо неймспейсить служебные классы виджета... */
+    .quick-quote-hidden { z-index: -1; }
+    /* ...и/или жёстко скоупить под корневой контейнер виджета: */
+    [data-qq-root] .quick-quote-hidden { z-index: -1; }
+  </style>
+
+  <!-- Виджет (stage) -->
+  <script src="https://stage.app.roofle.com/roof-quote-pro-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>
+
+  <title>Repro: .hidden + Tailwind overlay блокируют нав и вкладку виджета</title>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <header class="sticky top-0 z-10 bg-white border-b">
+    <div class="max-w-5xl mx-auto flex items-center justify-between p-4">
+      <h1 class="text-base font-semibold">Repro: конфликт .hidden и Tailwind overlay</h1>
+      <button id="applyFixes"
+        class="px-3 py-1.5 rounded border text-sm bg-white hover:bg-gray-100">
+        Apply fixes
+      </button>
+    </div>
+    <!-- Навигация с паттерном hidden md:flex -->
+    <nav class="bg-white">
       <ul class="hidden md:flex gap-6 p-4">
         <li><a href="#" class="text-blue-600 underline">Home</a></li>
         <li><a href="#" class="text-blue-600 underline">Products</a></li>
@@ -21,11 +43,55 @@
     </nav>
   </header>
 
-  <!-- Контент ниже «перекрывает» нав из-за отрицательного z-index у .hidden -->
-  <main class="relative z-0 -mt-8 p-8">
-    <div class="p-8 border rounded shadow">
-      <p>Try clicking the nav links — they look visible but are unclickable.</p>
+  <main class="relative z-0 max-w-5xl mx-auto p-6 space-y-4">
+    <p>
+      <strong>Ожидаемое поведение при загрузке этой страницы:</strong><br/>
+      (A) Ссылки навбара видимы, но не кликаются — нав уехал под контент из-за
+      глобального <code>.hidden { z-index:-1; }</code>.<br/>
+      (B) Вкладка виджета (обычно внизу справа) не открывается —
+      её перекрывает прозрачный оверлей (Tailwind <code>opacity-0</code>).
+    </p>
+    <p class="text-sm text-gray-600">
+      Нажмите “Apply fixes”, чтобы удалить глобальный .hidden и добавить
+      <code>pointer-events-none</code> оверлею — после этого нав и вкладка виджета станут кликабельными.
+    </p>
+
+    <!-- Немного контента, чтобы навбар мог "уехать" под него -->
+    <div class="p-6 border rounded shadow bg-white -mt-6">
+      <p>Контент перекрывает клики по навигации, пока у .hidden навбара действует z-index:-1.</p>
+      <p class="mt-2">Прокрутите страницу и попробуйте кликнуть вкладку виджета — клики блокирует оверлей.</p>
     </div>
+    <div class="h-[120vh]"></div>
   </main>
+
+  <!-- ПРОБЛЕМНЫЙ ОВЕРЛЕЙ: невидимый, но перехватывает клики -->
+  <!-- Типичный паттерн: opacity-0 / invisible БЕЗ pointer-events-none -->
+  <div id="blocking-overlay"
+       class="fixed inset-0 z-50 opacity-0"
+       aria-hidden="true"></div>
+
+  <script>
+    // Кнопка "Apply fixes": устраняет обе проблемы
+    const btn = document.getElementById('applyFixes');
+    const problematic = document.getElementById('problematic-styles');
+    const fixed = document.getElementById('fixed-styles');
+    const overlay = document.getElementById('blocking-overlay');
+
+    let fixedOn = false;
+    btn.addEventListener('click', () => {
+      fixedOn = !fixedOn;
+
+      // 1) Убрать глобальный .hidden { z-index:-1 } (имитация правки в виджете)
+      problematic.disabled = fixedOn;
+      fixed.disabled = !fixedOn;
+
+      // 2) Отключить перехват кликов невидимым оверлеем
+      overlay.classList.toggle('pointer-events-none', fixedOn);
+
+      btn.textContent = fixedOn
+        ? 'Fixes applied (нажмите, чтобы вернуть проблему)'
+        : 'Apply fixes';
+    });
+  </script>
 </body>
 </html>
