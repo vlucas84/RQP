@@ -1,33 +1,70 @@
 <html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>Tailwind Навигация</title>
-<script src="https://cdn.tailwindcss.com"></script>
-      <script src="https://stage.app.roofle.com/roof-quote-pro-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>
-    <script src="https://stage.app.roofle.com/loan-calculator-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>
-</head>
-<body class="bg-gray-100">
- 
-  <!-- Навигация -->
-<nav class="bg-white shadow p-4 flex justify-between items-center">
-<div class="text-xl font-bold">Мой сайт</div>
-<ul class="flex space-x-6">
-<li><a href="#" class="hover:text-blue-500">Главная</a></li>
-<li><a href="#" class="hover:text-blue-500">О нас</a></li>
-<!-- Выпадающее меню -->
-<li class="relative group">
-<button class="hover:text-blue-500">Сервисы ▼</button>
-<!-- Дропдаун -->
-<ul class="absolute left-0 mt-2 w-40 bg-white border rounded shadow-lg hidden group-hover: block">
-<li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Услуга 1</a></li>
-<li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Услуга 2</a></li>
-<li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Услуга 3</a></li>
-</ul>
-</li>
- 
-      <li><a href="#" class="hover:text-blue-500">Контакты</a></li>
-</ul>
-</nav>
- 
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Repro: Tailwind x .hidden (инжект из виджета)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ВАЖНО: виджет в <head>. Он инжектит глобальные стили, включая .hidden { z-index:-1 } -->
+    <script src="https://stage.app.roofle.com/roof-quote-pro-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script>
+
+    <!-- (Необязательно) второй скрипт, если нужен на странице -->
+    <!-- <script src="https://stage.app.roofle.com/loan-calculator-widget.js?id=tx4281qBzDeuTNeB5th_t" async></script> -->
+  </head>
+
+  <body class="min-h-screen bg-gray-50">
+    <header class="sticky top-0 z-10 bg-white border-b">
+      <div class="max-w-5xl mx-auto flex items-center justify-between p-4">
+        <h1 class="text-base font-semibold">Repro: .hidden от виджета ломает навбар</h1>
+        <!-- Диагностическая кнопка: локально снимает влияние .hidden { z-index:-1 } -->
+        <button id="overrideBtn"
+                class="px-3 py-1.5 rounded border text-sm bg-white hover:bg-gray-100">
+          Apply temporary override
+        </button>
+      </div>
+
+      <!-- Навигация с паттерном Tailwind `hidden md:flex` -->
+      <nav class="bg-white">
+        <ul class="hidden md:flex gap-6 p-4">
+          <li><a href="#" class="text-blue-600 underline">Home</a></li>
+          <li><a href="#" class="text-blue-600 underline">Products</a></li>
+          <li><a href="#" class="text-blue-600 underline">About</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Блок ниже частично «наезжает» на навбар, чтобы проявить эффект некликабельности -->
+    <main class="relative z-0 max-w-5xl mx-auto p-6 space-y-4">
+      <div class="p-6 border rounded shadow bg-white -mt-6">
+        <p>На ≥768px меню видно (md:flex), но клики не проходят: глобальный .hidden { z-index:-1 } от виджета
+           опускает слой навигации ниже этого блока.</p>
+      </div>
+      <div class="h-[120vh]"></div>
+    </main>
+
+    <script>
+      // Диагностический оверрайд: добавляет после инжекта виджета
+      // правило, снимающее z-index с .hidden, чтобы подтвердить причину.
+      const btn = document.getElementById('overrideBtn');
+      let applied = false;
+      let styleEl;
+
+      btn.addEventListener('click', () => {
+        if (!applied) {
+          styleEl = document.createElement('style');
+          styleEl.setAttribute('data-local-override', 'true');
+          styleEl.textContent = '.hidden { z-index: auto !important; }';
+          document.head.appendChild(styleEl);
+          applied = true;
+          btn.textContent = 'Remove override';
+        } else {
+          styleEl?.remove();
+          applied = false;
+          btn.textContent = 'Apply temporary override';
+        }
+      });
+    </script>
+  </body>
 </html>
