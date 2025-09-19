@@ -9,7 +9,12 @@
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Spectral|Rubik">
-
+    
+    <!-- 1) Имитация проблемного правила, инжектируемого виджетом -->
+    <style>
+      .hidden { z-index: -1; } /* ← конфликт с Tailwind */
+    </style>
+    
     <!-- Виджеты -->
     <script src="https://app.dev.roofle.coherentprojects.net/loan-calculator-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>
     <script src="https://app.dev.roofle.coherentprojects.net/roof-quote-pro-widget.js?id=VFwbzA3y7ZgdWpWNOXjIX" async></script>   
